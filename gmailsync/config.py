@@ -1,5 +1,4 @@
-
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from logging.config import dictConfig
 import os
 
@@ -8,27 +7,27 @@ class Config:
 
     def __init__(self):
         self.box_type = 'maildir'
-        self.token = os.path.abspath('~/.token.pickle')
-        self.log_path = os.path.abspath('~/.gmailsync.log')
+        self.token = os.path.abspath(os.path.expanduser('~/.gmailsync-token.pickle'))  # TODO: common function to sanitize paths
+        self.log_path = os.path.abspath(os.path.expanduser('~/.gmailsync.log'))
         self.channels = {}
         self.groups = {}
 
     def add_channel(self, channel):
-        channels[channel['name']] = channel
+        self.channels[channel['name']] = channel
 
     def add_group(self, group):
-        groups[group['name']] = group
+        self.groups[group['name']] = group
 
     def get_channels(self, names):
         if not names:
-            return channels.values()
+            return self.channels.values()
 
         channels = []
         for name in names:
             if name in channels:
-                channels.append(channels[name])
+                channels.append(self.channels[name])
             elif name in groups:
-                channels.extend([channels[c] for c in groups[name].channels])
+                channels.extend([channels[c] for c in self.groups[name].channels])
             else:
                 # TODO: show error
                 pass
@@ -49,9 +48,9 @@ class Group:
 
 
 class ConfigReader:
-	def load_config(self, conf_path):
-		parser = ConfigParser()
-		parser.read(os.path.abspath(filename))
+    def load_config(self, conf_path):
+        parser = ConfigParser()
+        parser.read(os.path.abspath(os.path.expanduser(conf_path)))
 
         config = Config()
 
@@ -96,10 +95,10 @@ class ConfigReader:
 
 
 def set_up_logger(verbose, log_path):
-	log_filename = os.path.join(log_path, 'gmailsync.log')
-	LOGGING['handlers']['file']['filename'] = log_filename
+    log_filename = os.path.join(log_path, 'gmailsync.log')
+    LOGGING['handlers']['file']['filename'] = log_filename
 
-	if verbose:
+    if verbose:
         LOGGING['loggers']['gmailsync']['level'] = 'DEBUG'
     else:
         LOGGING['loggers']['gmailsync']['level'] = 'INFO'
