@@ -30,11 +30,17 @@ setup(
     license='Apache 2.0',
     packages=['gmailsync'],
     package_dir={'gmailsync': 'gmailsync'},
-    package_data={'gmailsync': ['README.md', 'LICENSE']},
+    package_data={
+        'gmailsync': ['README.md', 'LICENSE']
+    },
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
-    entry_points={'console_scripts': ['gmailsync = gmailsync.main:main']}
+    entry_points={
+        'console_scripts': [
+            'gmailsync = gmailsync.__main__:main'
+        ]
+    },
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
