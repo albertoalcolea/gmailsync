@@ -1,7 +1,6 @@
 from .sync import Synchronizer
 from .client import Client
-from .storage import Mailboxes
-from .config import ConfigReader
+from .mailbox import Mailboxes, Mailbox
 
 
 __title__ = 'gmailsync'
@@ -11,5 +10,5 @@ __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2019 Alberto Alcolea'
 
 __all__ = [
-    'Synchronizer', 'Client', 'Mailboxes', 'ConfigReader'
+    'Synchronizer', 'Client', 'Mailboxes', 'Mailbox'
 ]

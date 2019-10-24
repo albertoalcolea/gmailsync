@@ -3,20 +3,24 @@ from logging.config import dictConfig
 import os
 
 
+def sanitize_path(path):
+    return os.path.abspath(os.path.expanduser(path))
+
+
 class Config:
 
     def __init__(self):
+        self.token = sanitize_path('~/.gmailsync-token.pickle')
         self.box_type = 'maildir'
-        self.token = os.path.abspath(os.path.expanduser('~/.gmailsync-token.pickle'))  # TODO: common function to sanitize paths
-        self.log_path = os.path.abspath(os.path.expanduser('~/.gmailsync.log'))
+        self.log_file = None
         self.channels = {}
         self.groups = {}
 
     def add_channel(self, channel):
-        self.channels[channel['name']] = channel
+        self.channels[channel.name] = channel
 
     def add_group(self, group):
-        self.groups[group['name']] = group
+        self.groups[group.name] = group
 
     def get_channels(self, names):
         if not names:
@@ -50,7 +54,7 @@ class Group:
 class ConfigReader:
     def load_config(self, conf_path):
         parser = ConfigParser()
-        parser.read(os.path.abspath(os.path.expanduser(conf_path)))
+        parser.read(sanitize_path(conf_path))
 
         config = Config()
 
@@ -59,6 +63,8 @@ class ConfigReader:
                 config.token = parser.get('general', 'token')
             if parser.has_option('general', 'box_type'):
                 config.box_type = parser.get('general', 'box_type')
+            if parser.has_option('general', 'log_file'):
+                config.log_file = sanitize_path(parser.get('general', 'log_file'))
 
         for section in parser.sections():
             if section.startswith('channel-'):
@@ -75,7 +81,7 @@ class ConfigReader:
         channel = Channel()
         channel.name = section.split('channel-', 1)[1]
         # TODO: validate local and remote are present -> mandatory
-        channel.local = parser.get(section, 'local')
+        channel.local = sanitize_path(parser.get(section, 'local'))
         channel.remote = parser.get(section, 'remote')
         if parser.has_option(section, 'box_type'):
             channel.box_type = parser.get(section, 'box_type')
@@ -94,14 +100,15 @@ class ConfigReader:
         return group
 
 
-def set_up_logger(verbose, log_path):
-    log_filename = os.path.join(log_path, 'gmailsync.log')
-    LOGGING['handlers']['file']['filename'] = log_filename
+def set_up_logger(verbose, log_file):
+    if log_file is not None:
+        LOGGING['handlers']['file']['filename'] = log_file
+        LOGGING['loggers']['gmailsync']['handlers'].append('file')
+    else:
+        del LOGGING['handlers']['file']
 
     if verbose:
         LOGGING['loggers']['gmailsync']['level'] = 'DEBUG'
-    else:
-        LOGGING['loggers']['gmailsync']['level'] = 'INFO'
 
     dictConfig(LOGGING)
 
@@ -111,7 +118,7 @@ LOGGING = {
     'version': 1,
     'formatters': {
         'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s'
+            'format': '%(asctime)s %(levelname)s [%(name)s] %(message)s'
         },
     },
     'handlers': {
@@ -135,8 +142,8 @@ LOGGING = {
     },
     'loggers': {
         'gmailsync': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'handlers': ['console'],
+            'level': 'INFO',
         }
     }
 }

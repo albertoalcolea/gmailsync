@@ -22,12 +22,19 @@ class Synchronizer:
         self.mailboxes = mailboxes
 
     def sync(self):
-        last_timestamp = self.storage.get_state()
+        # TODO: optimize routing for messages tagged with multiple labels
+        for label, mailbox in self.mailboxes.items():
+            self.sync_mailbox(label, mailbox)
 
-        msg_descs = self.client.list(since=last_timestamp)
+
+    def sync_mailbox(self, label, mailbox):
+        last_timestamp = mailbox.get_state()
+
+        log.debug('Getting new messages for remote [%s]', label)
+        msg_descs = self.client.list(label=label, since=last_timestamp)
         msg_descs.reverse() # ASC order
 
-        # TODO: route messages to proper mailbox
+        log.debug('Fetching messages for remote [%s]', label)
 
         total = 0
 
@@ -37,15 +44,17 @@ class Synchronizer:
             messages = self.client.fetch(chunk)
             for raw_msg in messages:
                 msg = self._decode(raw_msg)
-                self.storage.add(msg)
+                mailbox.add(msg)
                 total += 1
 
             # Safe path to save the state of the already stored messages before to continue with
             # next chunk
             last_timestamp = self._get_last_timestamp(messages)
-            self.storage.save_state(last_timestamp)
+            mailbox.save_state(last_timestamp)
 
-            log.info('Stored %s new messages', total)
+            log.debug('Stored %s new messages for remote [%s]', total, label)
+
+        log.info('Synchronized %s new messages for remote [%s]', total, label)
 
     def _decode(self, message):
         return base64.urlsafe_b64decode(message['raw'].encode('ASCII'))

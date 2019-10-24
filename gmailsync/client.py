@@ -66,11 +66,14 @@ class Client:
         response = self.service.users().labels().list(userId='me').execute()
         return response.get('labels', [])
 
-    def list(self, since=None):
-        # TODO: test discard chats
-        query = '!in:chat'
+    def list(self, label=None, since=None):
+        if label:
+            query = 'label:{}'.format(label)
+        else:
+            # If not specified as a label, discard hangout chats
+            query = '!in:chat'
         if since:
-            query += ' after:{}'.format(since)
+            query += ' AND after:{}'.format(since)
 
         response = self.service.users().messages().list(userId='me', q=query).execute()
         messages = []
@@ -96,22 +99,6 @@ class Client:
         response = self.service.users().messages().get(userId='me', id=message_id,
             format='raw').execute()
         return response.get('raw')
-
-    # def fetch(self, callback, since=None):
-    #     msg_list = self.list(since)
-
-    #     # Sending batches larger than 50 requests is not recommended.
-    #     # https://developers.google.com/gmail/api/v1/reference/quota
-    #     for chunk in chunked(msg_list, 50):
-    #         batch = BatchHttpRequest()
-    #         for msg_desc in chunk:
-    #             batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'],
-    #                 format='raw'), callback=callback)
-    #         batch.execute()
-
-    #         # Safe path to avoid quota limits: 250 quota units per user per second
-    #         # https://developers.google.com/gmail/api/v1/reference/quota
-    #         time.sleep(1)
 
     def fetch(self, msg_ids):
         fetcher = MessageFetcher()

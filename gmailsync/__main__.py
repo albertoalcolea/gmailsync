@@ -1,7 +1,7 @@
 import argparse
 from .config import ConfigReader, set_up_logger
 from .client import Client
-from .storage import Mailboxes
+from .mailbox import Mailboxes
 from .sync import Synchronizer
 
 
@@ -37,7 +37,7 @@ def main():
     config_reader = ConfigReader()
     config = config_reader.load_config(args.conf)
 
-    #set_up_logger(args.verbose, config.log_path)
+    set_up_logger(args.verbose, config.log_file)
 
     client = Client(config.token)
 
