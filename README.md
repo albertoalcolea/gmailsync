@@ -19,7 +19,7 @@ pip install gmailsync
 pip install gmailsync --upgrade
 ```
 
-### Usage
+## Usage
 
 List Gmail labels:
 
