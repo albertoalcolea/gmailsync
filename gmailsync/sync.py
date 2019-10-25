@@ -17,24 +17,23 @@ def chunked(iterable, size):
 
 class Synchronizer:
 
-    def __init__(self, client, mailboxes):
+    def __init__(self, client, channels):
         self.client = client
-        self.mailboxes = mailboxes
+        self.channels = channels
 
     def sync(self):
         # TODO: optimize routing for messages tagged with multiple labels
-        for label, mailbox in self.mailboxes.items():
-            self.sync_mailbox(label, mailbox)
+        for channel in self.channels:
+            self.sync_channel(channel)
 
+    def sync_channel(self, channel):
+        last_timestamp = channel.mailbox.get_state()
 
-    def sync_mailbox(self, label, mailbox):
-        last_timestamp = mailbox.get_state()
-
-        log.debug('Getting new messages for remote [%s]', label)
-        msg_descs = self.client.list(label=label, since=last_timestamp)
+        log.debug('Channel [%s] - Getting new messages', channel.name)
+        msg_descs = self.client.list(query=channel.query, since=last_timestamp)
         msg_descs.reverse() # ASC order
 
-        log.debug('Fetching messages for remote [%s]', label)
+        log.debug('Channel [%s] - Fetching %s new messages', channel.name, len(msg_descs))
 
         total = 0
 
@@ -44,17 +43,17 @@ class Synchronizer:
             messages = self.client.fetch(chunk)
             for raw_msg in messages:
                 msg = self._decode(raw_msg)
-                mailbox.add(msg)
+                channel.mailbox.add(msg)
                 total += 1
 
             # Safe path to save the state of the already stored messages before to continue with
             # next chunk
             last_timestamp = self._get_last_timestamp(messages)
-            mailbox.save_state(last_timestamp)
+            channel.mailbox.save_state(last_timestamp)
 
-            log.debug('Stored %s new messages for remote [%s]', total, label)
+            log.debug('Channel [%s] - %s new messages stored', channel.name, total)
 
-        log.info('Synchronized %s new messages for remote [%s]', total, label)
+        log.info('Channel [%s] - %s new messages synchronized', channel.name, total)
 
     def _decode(self, message):
         return base64.urlsafe_b64decode(message['raw'].encode('ASCII'))

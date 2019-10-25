@@ -1,8 +1,16 @@
+import sys
 import argparse
+import traceback
+import logging
+
 from .config import ConfigReader, set_up_logger
 from .client import Client
-from .mailbox import Mailboxes
 from .sync import Synchronizer
+from .channel import channel_factory
+from .cli import cprint
+
+
+log = logging.getLogger('gmailsync')
 
 
 def load_args():
@@ -25,27 +33,43 @@ def list_labels(client):
         print('  ', label)
 
 
-def sync_mailboxes(client, channels):
-    mailboxes = Mailboxes(channels)
-    synchronizer = Synchronizer(client, mailboxes)
+def sync_mailboxes(client, channels_to_sync):
+    channels = channel_factory(channels_to_sync)
+    synchronizer = Synchronizer(client, channels)
     synchronizer.sync()
 
 
 def main():
     args = load_args()
 
-    config_reader = ConfigReader()
-    config = config_reader.load_config(args.conf)
+    try:
+        config_reader = ConfigReader()
+        config = config_reader.load_config(args.conf)
 
-    set_up_logger(args.verbose, config.log_file)
+        set_up_logger(args.verbose, config.logger_config)
 
-    client = Client(config.token)
+        client = Client(config.credentials, config.token)
 
-    if args.labels:
-        list_labels(client)
-    else:
-        channels_to_sync = config.get_channels(args.channels)
-        sync_mailboxes(client, channels_to_sync)
+        if args.labels:
+            list_labels(client)
+        else:
+            channels_to_sync = config.get_channels(args.channels)
+            sync_mailboxes(client, channels_to_sync)
+
+    except (KeyboardInterrupt, SystemExit):
+        # Do nothing
+        pass
+
+    except Exception as e:
+        if log.handlers:
+            # If logger is already configured
+            log.error('Something went wrong', exc_info=True)
+
+        cprint(e, color='error', file=sys.stderr)
+        if args.verbose:
+            traceback.print_exc(file=sys.stderr)
+
+        sys.exit(1)
 
 
 if __name__ == '__main__':

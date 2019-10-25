@@ -1,18 +1,33 @@
 from configparser import ConfigParser
-from logging.config import dictConfig
+import logging
+import logging.handlers
 import os
 
 
-def sanitize_path(path):
-    return os.path.abspath(os.path.expanduser(path))
+def to_path(value, is_file=False, can_read=False):
+    path = os.path.abspath(os.path.expanduser(value))
+    if is_file:
+        if not os.path.isfile(path):
+            raise ValidationError('Invalid value in config file. <' + value + '> should be a valid file')
+        if can_read and not os.access(path, os.R_OK):
+            raise ValidationError('Invalid value in config file. <' + value + '> should be a readable file. Check permissions')
+    return path
+
+
+def to_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        raise ValidationError('Invalid value in config file. <' + value + '> should be an int')
 
 
 class Config:
 
     def __init__(self):
-        self.token = sanitize_path('~/.gmailsync-token.pickle')
+        self.credentials = to_path('~/.gmailsync-credentials.json', is_file=True, can_read=True)
+        self.token = to_path('~/.gmailsync-token.pickle')
         self.box_type = 'maildir'
-        self.log_file = None
+        self.logger_config = None
         self.channels = {}
         self.groups = {}
 
@@ -37,34 +52,48 @@ class Config:
                 pass
 
 
-class Channel:
+class ChannelConfig:
+
     def __init__(self):
         self.name = None
-        self.local = None
-        self.remote = None
+        self.mailbox_path = None
+        self.query = None
         self.box_type = None
 
 
-class Group:
+class GroupConfig:
+
     def __init__(self):
         self.name = None
         self.channels = []
 
 
+class LoggerConfig:
+
+    def __init__(self):
+        self.file = None
+        self.file_max_bytes = 104857600 # 100 MB
+        self.file_backup_count = 500 # 500 files
+        self.format = '%(asctime)s %(levelname)s [%(name)s] %(message)s'
+
+
 class ConfigReader:
+
     def load_config(self, conf_path):
         parser = ConfigParser()
-        parser.read(sanitize_path(conf_path))
+        parser.read(to_path(conf_path))
 
         config = Config()
 
         if parser.has_section('general'):
+            if parser.has_option('general', 'credentials'):
+                config.credentials = parser.get('general', 'credentials')
             if parser.has_option('general', 'token'):
                 config.token = parser.get('general', 'token')
             if parser.has_option('general', 'box_type'):
                 config.box_type = parser.get('general', 'box_type')
-            if parser.has_option('general', 'log_file'):
-                config.log_file = sanitize_path(parser.get('general', 'log_file'))
+
+        config.logger_config = self._parse_logger_config(parser)
 
         for section in parser.sections():
             if section.startswith('channel-'):
@@ -78,11 +107,10 @@ class ConfigReader:
         return config
 
     def _parse_channel(self, parser, section, default_box_type):
-        channel = Channel()
+        channel = ChannelConfig()
         channel.name = section.split('channel-', 1)[1]
-        # TODO: validate local and remote are present -> mandatory
-        channel.local = sanitize_path(parser.get(section, 'local'))
-        channel.remote = parser.get(section, 'remote')
+        channel.mailbox_path = to_path(parser.get(section, 'mailbox'))
+        channel.query = parser.get(section, 'query')
         if parser.has_option(section, 'box_type'):
             channel.box_type = parser.get(section, 'box_type')
         else:
@@ -90,60 +118,46 @@ class ConfigReader:
         return channel
 
     def _parse_group(self, parser, section):
-        group = Group()
+        group = GroupConfig()
         group.name = section.split('group-', 1)[1]
-        # TODO: validate channels is present -> mandatory
-        channels = parser.get(section, 'channels').split(',')
+        channels = [channel.strip() for channel in parser.get(section, 'channels').split(',')]
         for channel in channels:
-            # TODO: validate channel startswith 'channel-'
+            if not channel.startswith('channel-') or not parser.has_section(channel):
+                raise ValueError("'channels' section in '" + section + "' must contain a "\
+                    "comma-separated list of valid channels")
             group.channels.append(channel.strip())
         return group
 
+    def _parse_logger_config(self, parser):
+        logger_config = LoggerConfig()
+        if parser.has_option('log', 'file'):
+            logger_config.file = to_path(parser.get('log', 'file'))
+        if parser.has_option('log', 'file_max_bytes'):
+            logger_config.file_max_bytes = to_int(parser.get('log', 'file_max_bytes'))
+        if parser.has_option('log', 'file_backup_count'):
+            logger_config.file_backup_count = to_int(parser.get('log', 'file_backup_count'))
+        if parser.has_option('log', 'format'):
+            logger_config.format = parser.get('log', 'format')
+        return logger_config
 
-def set_up_logger(verbose, log_file):
-    if log_file is not None:
-        LOGGING['handlers']['file']['filename'] = log_file
-        LOGGING['loggers']['gmailsync']['handlers'].append('file')
-    else:
-        del LOGGING['handlers']['file']
 
-    if verbose:
-        LOGGING['loggers']['gmailsync']['level'] = 'DEBUG'
+def set_up_logger(verbose, conf=None):
+    logger = logging.getLogger('gmailsync')
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
-    dictConfig(LOGGING)
+    formatter = logging.Formatter(conf.format)
 
+    handlers = []
 
-# Logging config
-LOGGING = {
-    'version': 1,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s %(levelname)s [%(name)s] %(message)s'
-        },
-    },
-    'handlers': {
-        'null': {
-            'class': 'logging.NullHandler',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': None,
-            'mode': 'a',
-            'maxBytes': 104857600, # 100 MB
-            'backupCount': 500, # 500 files
-        }
-    },
-    'loggers': {
-        'gmailsync': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        }
-    }
-}
+    console_handler = logging.StreamHandler()
+    handlers.append(console_handler)
+
+    if conf.file is not None:
+        file_handler = logging.handlers.RotatingFileHandler(conf.file,
+            maxBytes=conf.file_max_bytes, backupCount=conf.file_backup_count)
+        handlers.append(file_handler)
+
+    for handler in handlers:
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)

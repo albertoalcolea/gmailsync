@@ -6,29 +6,10 @@ from mailbox import MMDF
 import os
 
 
-class Mailboxes:
-    """ Loockup tables to be able to get the proper mailbox for a channel by its remote label """
-    def __init__(self, channels):
-        self._by_name = {}
-        self._by_remote = {}
-        for channel in channels:
-            mailbox = Mailbox(channel.box_type, channel.local)
-            self._by_name[channel.name] = mailbox
-            self._by_remote[channel.remote] = mailbox
-
-    def items(self):
-        return self._by_remote.items()
-
-    def get_by_channel(self, name):
-        return self._by_name(name)
-
-    def get_by_remote(self, remote):
-        return self._by_remote(remote)
-
-
 class Mailbox:
     """ Mailbox storage with state """
     def __init__(self, box_type, path):
+        self.path = path
         self.state_file = os.path.join(path, '.gmailsyncstate')
 
         if box_type == 'maildir':
@@ -56,3 +37,6 @@ class Mailbox:
         if os.path.isfile(self.state_file):
             with open(self.state_file) as f:
                 return int(f.read().strip())
+
+    def __str__(self):
+        return 'Mailbox <{}>'.format(self.path)

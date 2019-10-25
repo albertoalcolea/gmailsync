@@ -1,6 +1,7 @@
 from .sync import Synchronizer
 from .client import Client
-from .mailbox import Mailboxes, Mailbox
+from .mailbox import Mailbox
+from .channel import Channel
 
 
 __title__ = 'gmailsync'
@@ -10,5 +11,5 @@ __license__ = 'Apache 2.0'
 __copyright__ = 'Copyright 2019 Alberto Alcolea'
 
 __all__ = [
-    'Synchronizer', 'Client', 'Mailboxes', 'Mailbox'
+    'Synchronizer', 'Client', 'Mailbox', 'Channel'
 ]

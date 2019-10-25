@@ -38,11 +38,11 @@ class MessageFetcher:
 
 class Client:
 
-    def __init__(self, token_path):
-        creds = self._authenticate(token_path)
+    def __init__(self, credentials_path, token_path):
+        creds = self._authenticate(credentials_path, token_path)
         self.service = build('gmail', 'v1', credentials=creds)
 
-    def _authenticate(self, token_path):
+    def _authenticate(self, credentials_path, token_path):
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -55,7 +55,7 @@ class Client:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open(token_path, 'wb') as token:
@@ -66,11 +66,9 @@ class Client:
         response = self.service.users().labels().list(userId='me').execute()
         return response.get('labels', [])
 
-    def list(self, label=None, since=None):
-        if label:
-            query = 'label:{}'.format(label)
-        else:
-            # If not specified as a label, discard hangout chats
+    def list(self, query=None, since=None):
+        if not query:
+            # If not specified explicitly in the query, discard hangout chats
             query = '!in:chat'
         if since:
             query += ' AND after:{}'.format(since)
