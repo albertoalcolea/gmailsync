@@ -48,8 +48,7 @@ class Config:
             elif name in groups:
                 channels.extend([channels[c] for c in self.groups[name].channels])
             else:
-                # TODO: show error
-                pass
+                raise ValueError("Channel '" + name + "' is not present in config file")
 
 
 class ChannelConfig:

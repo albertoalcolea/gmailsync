@@ -7,7 +7,9 @@ import os
 
 
 class Mailbox:
-    """ Mailbox storage with state """
+    """
+    Mailbox storage with state.
+    """
     def __init__(self, box_type, path):
         self.path = path
         self.state_file = os.path.join(path, '.gmailsyncstate')
@@ -26,7 +28,10 @@ class Mailbox:
             raise NotImplementedError('Mailbox not implemented')
 
     def add(self, message):
-        """ message must be a RFC 2822-compliant message as a string, a byte string """
+        """
+        Store a message in the mailbox.
+        :param messagge: must be a RFC 2822-compliant message as a string or a byte string.
+        """
         self.mailbox.add(message)
 
     def save_state(self, last_timestamp):
