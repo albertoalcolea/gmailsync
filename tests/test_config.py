@@ -181,7 +181,6 @@ class ConfigSetUpLoggerTestCase(unittest.TestCase):
         self._verify_file_handler(logger.handlers[1], '/home/user/.gmailsync.log',
             self.DEFAULT_MAX_BYTES, self.DEFAULT_BACKUP_COUNT, '%(message)s')
 
-
     def _verify_console_handler(self, handler, log_format):
         self.assertTrue(isinstance(handler, logging.StreamHandler))
         self.assertEqual(handler.level, logging.DEBUG)
