@@ -2,9 +2,6 @@
 Utilities to work with command line interfaces through terminal emulators.
 """
 
-BOLD = '\033[1m'
-RESET = '\033[0m'
-
 COLORS = {
     'grey': '\033[30m',
     'red': '\033[31m',
@@ -14,17 +11,50 @@ COLORS = {
     'magenta': '\033[35m',
     'cyan': '\033[36m',
     'white': '\033[37m',
+    'bright_grey': '\033[90m',
+    'bright_red': '\033[91m',
+    'bright_green': '\033[92m',
+    'bright_yellow': '\033[93m',
+    'bright_blue': '\033[94m',
+    'bright_magenta': '\033[95m',
+    'bright_cyan': '\033[96m',
+    'bright_white': '\033[97m',
 }
 
-COLORS['success'] = COLORS['green'] + BOLD
-COLORS['warning'] = COLORS['yellow'] + BOLD
-COLORS['error'] = COLORS['red'] + BOLD
+BOLD = '\033[1m'
+RESET = '\033[0m'
+
+STATUSES = {
+    'success': COLORS['green'],
+    'warning': COLORS['yellow'],
+    'error': COLORS['red'],
+}
 
 
-def cprint(text, color=None, **kwargs):
-    """ Print colorized text.
+def color_text(text, color, bold=False):
     """
-    if color is not None and color in COLORS:
-        print('{}{}{}'.format(COLORS[color], text, RESET), **kwargs)
+    Add ANSI escape sequence to color :param text with :param color color.
+    """
+    if bold:
+        return '{}{}{}{}'.format(color, BOLD, text, RESET)
     else:
-        print(text, **kargs)
+        return '{}{}{}'.format(color, text, RESET)
+
+
+def cprint(text, status=None, color=None, bold=False, **kwargs):
+    """
+    Print colorized text.
+
+    :param text: text to be colored.
+    :param status: standard status as a string: ('success', 'warning' or 'error').
+    If defined, :param color and :param bold will be ignored.
+    :param color: color to color the text.
+    :param bold: if `True` the special escape sequence to print the text in bold will be added.
+    :param **kwargs: optional keyword arguments supported by `print` function.
+    """
+    if status is not None and status in STATUSES:
+        print(color_text(text, STATUSES[status], bold=True), **kwargs)
+    elif color is not None and color in COLORS:
+        print(color_text(text, COLORS[color], bold=bold), **kwargs)
+    else:
+        print(text, **kwargs)

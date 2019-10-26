@@ -65,7 +65,7 @@ def main():
             # If logger is already configured
             log.error('Something went wrong', exc_info=True)
 
-        cprint(e, color='error', file=sys.stderr)
+        cprint(e, status='error', file=sys.stderr)
         if args.verbose:
             traceback.print_exc(file=sys.stderr)
 
