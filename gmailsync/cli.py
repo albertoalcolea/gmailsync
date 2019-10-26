@@ -2,59 +2,93 @@
 Utilities to work with command line interfaces through terminal emulators.
 """
 
-COLORS = {
-    'grey': '\033[30m',
-    'red': '\033[31m',
-    'green': '\033[32m',
-    'yellow': '\033[33m',
-    'blue': '\033[34m',
-    'magenta': '\033[35m',
-    'cyan': '\033[36m',
-    'white': '\033[37m',
-    'bright_grey': '\033[90m',
-    'bright_red': '\033[91m',
-    'bright_green': '\033[92m',
-    'bright_yellow': '\033[93m',
-    'bright_blue': '\033[94m',
-    'bright_magenta': '\033[95m',
-    'bright_cyan': '\033[96m',
-    'bright_white': '\033[97m',
-}
+from enum import Enum
+
+
+class Color(Enum):
+    GREY = '\033[30m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    MAGENTA = '\033[35m'
+    CYAN = '\033[36m'
+    WHITE = '\033[37m'
+    BRIGHT_GREY = '\033[90m'
+    BRIGHT_RED = '\033[91m'
+    BRIGHT_GREEN = '\033[92m'
+    BRIGHT_YELLOW = '\033[93m'
+    BRIGHT_BLUE = '\033[94m'
+    BRIGHT_MAGENTA = '\033[95m'
+    BRIGHT_CYAN = '\033[96m'
+    BRIGHT_WHITE = '\033[97m'
+
+
+
+class Status(Enum):
+    SUCCESS = Color.GREEN
+    WARNING = Color.YELLOW
+    ERROR = Color.RED
+
 
 BOLD = '\033[1m'
 RESET = '\033[0m'
 
-STATUSES = {
-    'success': COLORS['green'],
-    'warning': COLORS['yellow'],
-    'error': COLORS['red'],
-}
 
+def color_text(text, color=None, bold=False):
+    """
+    Add ANSI escape sequences to color :param text.
 
-def color_text(text, color, bold=False):
+    :param text: text to be colored.
+
+    :param color: optional item of 'Color' enum with the color to color the text.
+    If not defined, default color will be used.
+
+    :param bold: if `True` the special escape sequence to print the text in bold will be added.
+
     """
-    Add ANSI escape sequence to color :param text with :param color color.
-    """
+    if color is not None and not isinstance(color, Color):
+        raise ValueError("'color' must be an item of 'Color' enum")
+
+    colored = []
+
+    if color is not None:
+        colored.append(color.value)
+
     if bold:
-        return '{}{}{}{}'.format(color, BOLD, text, RESET)
-    else:
-        return '{}{}{}'.format(color, text, RESET)
+        colored.append(BOLD)
+
+    colored.append(text)
+
+    if color is not None or bold:
+        colored.append(RESET)
+
+    return ''.join(colored)
 
 
-def cprint(text, status=None, color=None, bold=False, **kwargs):
+def cprint(text, color=None, status=None, bold=False, **kwargs):
     """
     Print colorized text.
 
     :param text: text to be colored.
-    :param status: standard status as a string: ('success', 'warning' or 'error').
+
+    :param color: optional item of 'Color' enum with the color to color the text.
+    If not defined, default color will be used.
+
+    :param status: optional item of 'Status' enum.
     If defined, :param color and :param bold will be ignored.
-    :param color: color to color the text.
+
     :param bold: if `True` the special escape sequence to print the text in bold will be added.
+
     :param **kwargs: optional keyword arguments supported by `print` function.
+
     """
-    if status is not None and status in STATUSES:
-        print(color_text(text, STATUSES[status], bold=True), **kwargs)
-    elif color is not None and color in COLORS:
-        print(color_text(text, COLORS[color], bold=bold), **kwargs)
+    if status is not None and not isinstance(status, Status):
+        raise ValueError("'status' must be an item of 'Status' enum")
+
+    if status is not None:
+        colored = color_text(text, status.value, bold=True)
     else:
-        print(text, **kwargs)
+        colored = color_text(text, color, bold=bold)
+
+    print(colored, **kwargs)

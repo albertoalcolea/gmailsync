@@ -5,20 +5,23 @@ import os
 
 
 def to_path(value, is_file=False, can_read=False):
-    path = os.path.abspath(os.path.expanduser(value))
-    if is_file:
-        if not os.path.isfile(path):
-            raise ValidationError('Invalid value in config file. <' + value + '> should be a valid file')
-        if can_read and not os.access(path, os.R_OK):
-            raise ValidationError('Invalid value in config file. <' + value + '> should be a readable file. Check permissions')
-    return path
+    try:
+        path = os.path.abspath(os.path.expanduser(value))
+        if is_file:
+            if not os.path.isfile(path):
+                raise ValueError('Invalid value in config file. <' + str(value) + '> should be a valid file')
+            if can_read and not os.access(path, os.R_OK):
+                raise ValueError('Invalid value in config file. <' + str(value) + '> should be a readable file. Check permissions')
+        return path
+    except TypeError:
+        raise ValueError('Invalid value in config file. <' + str(value) + '> should be a path')
 
 
 def to_int(value):
     try:
         return int(value)
     except (ValueError, TypeError):
-        raise ValidationError('Invalid value in config file. <' + value + '> should be an int')
+        raise ValueError('Invalid value in config file. <' + str(value) + '> should be an int')
 
 
 class Config:
@@ -48,7 +51,7 @@ class Config:
             elif name in groups:
                 channels.extend([channels[c] for c in self.groups[name].channels])
             else:
-                raise ValueError("Channel '" + name + "' is not present in config file")
+                raise ValueError("Channel '" + str(name) + "' is not present in config file")
 
 
 class ChannelConfig:
@@ -56,8 +59,8 @@ class ChannelConfig:
     def __init__(self):
         self.name = None
         self.mailbox_path = None
-        self.query = None
         self.box_type = None
+        self.query = None
 
 
 class GroupConfig:

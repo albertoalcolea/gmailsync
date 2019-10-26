@@ -6,6 +6,15 @@ log = logging.getLogger('gmailsync')
 
 
 def channel_factory(channels_config):
+    """
+    Create Channel objects from ChannelConfig configurations.
+
+    This factory instantiate and configure a list of Channel objects as well as the Mailbox
+    objects for each channel.
+
+    :param channels_config: list of ChannelConfig objects with the configuration of each channel.
+
+    """
     channels = []
     for config in channels_config:
         mailbox = Mailbox(config.box_type, config.mailbox_path)

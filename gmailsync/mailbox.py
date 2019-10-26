@@ -25,7 +25,7 @@ class Mailbox:
         elif box_type == 'mmdf':
             self.mailbox = MMDF(path)
         else:
-            raise NotImplementedError('Mailbox not implemented')
+            raise NotImplementedError('Unsupported mailbox')
 
     def add(self, message):
         """
@@ -40,7 +40,7 @@ class Mailbox:
 
     def get_state(self):
         if os.path.isfile(self.state_file):
-            with open(self.state_file) as f:
+            with open(self.state_file, 'r') as f:
                 return int(f.read().strip())
 
     def __str__(self):
