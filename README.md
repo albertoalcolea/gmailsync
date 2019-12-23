@@ -1,4 +1,7 @@
 # gmailsync
+
+[![Build Status](https://travis-ci.org/albertoalcolea/gmailsync.svg?branch=master)](https://travis-ci.org/albertoalcolea/gmailsync)
+
 Synchronize and save a backup of your Gmail messages
 
 ## Requirements
