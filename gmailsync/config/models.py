@@ -9,7 +9,7 @@ DEFAULT_TOKEN_PATH = '~/.gmailsync-token.pickle'
 DEFAULT_BOX_TYPE = 'maildir'
 
 DEFAULT_LOG_MAX_BYTES = 104857600 # 100 MB
-DEFAULT_LOG_BACKUP_COUNT = 500 # 500 files
+DEFAULT_LOG_BACKUP_COUNT = 50 # 50 files
 DEFAULT_LOG_FORMAT = '%(asctime)s %(levelname)s [%(name)s] %(message)s'
 
 
