@@ -91,11 +91,7 @@ So, you could execute:
  - `gmailsync important notifications` to retrieve the new messages of the channels in the group "important" and in the channel "notifications".
  - Etc.
 
-Configuration options are grouped in sections:
- - General: General options of the application.
- - Channels: Configuration of the channels. One section per channel.
- - Groups: Configuration of the groups. One section per group.
- - Log: Configuration of the logger.
+Configuration options are grouped in sections: general, channels, groups and log.
 
 ### General
 
