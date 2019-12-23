@@ -104,6 +104,7 @@ General options of the application.
 The section name in the configuration file is `general`.
 
 Options:
+
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
 | `credentials`  | Path to the credentials file of your Google Cloud Platform project.  | No | `~/.gmailsync-credentials.json` |
@@ -117,6 +118,7 @@ Configuration of the channel.
 The section names (one per channel) must follow this pattern: `channel-{channnel_name}`, where `{channel_name}` must be the name of the channel.
 
 Options:
+
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
 | `mailbox` | Path to the directory where to store the messages. | Yes | |
@@ -130,6 +132,7 @@ Configuration of the group.
 The section names (one per group) must follow this pattern: `group-{group_name}`, where `{group}` must be the name of the group.
 
 Options
+
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
 | `channels` | List of channel names separated by comma. | Yes | |
@@ -141,6 +144,7 @@ Configuration of the logger.
 The section name in the configuration file is `log`.
 
 Options:
+
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
 | `file` | Path to the file where the logs messages will be stored. | No | |
