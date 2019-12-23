@@ -6,4 +6,4 @@ __pycache__
 *.swp
 *.egg
 venv/
-credentials.json
+.tox
