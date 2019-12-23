@@ -39,7 +39,7 @@ class Channel:
         self.mailbox = mailbox
         self.query = query
 
-        if 'after:' in query:
+        if query is not None and 'after:' in query:
             log.warn("'after:' will be overwritten in query to do incremental queries based on the saved state")
 
     def __str__(self):

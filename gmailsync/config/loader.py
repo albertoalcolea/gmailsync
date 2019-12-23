@@ -52,7 +52,7 @@ class ConfigLoader:
     def _parse_channel(self, section):
         name = self._extract_name(section, prefix='channel-')
         mailbox_path = self.parser.getpath(section, 'mailbox')
-        query = self.parser.get(section, 'query')
+        query = self.parser.get(section, 'query', fallback=None)
         box_type = self.parser.get(section, 'box_type', fallback=None)
         return ChannelConfig(name=name, mailbox_path=mailbox_path, query=query, box_type=box_type)
 

@@ -134,12 +134,11 @@ class ConfigLoaderTestCase(unittest.TestCase):
     def test_no_option(self):
         parser = FakeParser({
              'channel-ch1': {
-                'mailbox': '/mail',
                 'box_type': 'mbox'
             }
         })
         loader = ConfigLoader(parser)
-        with self.assertRaisesRegex(ConfigurationError, "No option 'query' in section: 'channel-ch1'"):
+        with self.assertRaisesRegex(ConfigurationError, "No option 'mailbox' in section: 'channel-ch1'"):
             config = loader.load()
 
     def test_invalid_section(self):

@@ -4,12 +4,8 @@ from mailbox import MH
 from mailbox import Babyl
 from mailbox import MMDF
 import os
-import logging
 
 from .message import MessageFormatter
-
-
-log = logging.getLogger('gmailsync')
 
 
 class Mailbox:
@@ -53,8 +49,6 @@ class Mailbox:
 
         """
         formatted = self.formatter.format(message)
-        # if log.isEnabledFor(logging.DEBUG):
-        #     log.debug("Adding message to mailbox [%s]: %r", self.__str__(), formatted)
         self.mailbox.add(formatted['message'])
         self._update_state(formatted['timestamp'])
 

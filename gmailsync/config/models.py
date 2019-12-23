@@ -31,15 +31,15 @@ class ChannelConfig(BaseConfig):
 
     :param mailbox_path: path where to store the messages.
 
-    :param query: query used to retrieve the messages. Supports the same query format as the
-    Gmail search box.
+    :param query: optional query used to retrieve the messages. Supports the same query format
+    as the Gmail search box. If it is not defined, it will retrive all messages.
 
-    :param box_type: mailbox type. If it is not defined, the default one defined in Config will
-    be used.
+    :param box_type: optional mailbox type. If it is not defined, the default one defined in
+    Config will be used.
 
     """
 
-    def __init__(self, name, mailbox_path, query, box_type=None):
+    def __init__(self, name, mailbox_path, query=None, box_type=None):
         self.name = name
         self.mailbox_path = expand_path(mailbox_path)
         self.query = query
