@@ -49,6 +49,7 @@ class Mailbox:
           - raw: the entire email message in an RFC 2822 formatted and base64url encoded string.
           - internalDate: the internal message creation timestamp (epoch ms), which determines
             ordering in the inbox. It is used to track the state of the mailbox.
+          - labelIds: list of labels with which the message has been labeled.
 
         """
         formatted = self.formatter.format(message)
