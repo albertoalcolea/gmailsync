@@ -6,7 +6,7 @@ Synchronize and save a backup of your Gmail messages
 
 ## Requirements
 
-- python (3.4+)
+- python (3.6+)
 - pip
 
 ## Installation
