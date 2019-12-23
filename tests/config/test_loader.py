@@ -128,7 +128,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
         config = loader.load()
         self.assertEqual(config.logger_config.file, None)
         self.assertEqual(config.logger_config.max_bytes, 104857600)
-        self.assertEqual(config.logger_config.backup_count, 500)
+        self.assertEqual(config.logger_config.backup_count, 50)
         self.assertEqual(config.logger_config.format, '%(asctime)s %(levelname)s [%(name)s] %(message)s')
 
     def test_no_option(self):
