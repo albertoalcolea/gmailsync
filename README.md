@@ -107,6 +107,13 @@ Options:
 | `token` | Path where the token file will be stored. This file contains the token for your associated Gmail account. | No | `~/.gmailsync-token.pickle` |
 | `box_type` | Default box type for all channels. | No | `mailbox` |
 
+Gmailsync supports the following mailbox types:
+ - `maildir`
+ - `mbox`
+ - `mh`
+ - `babyl`
+ - `mmdf`
+
 ### Channels
 
 Configuration of the channel.
