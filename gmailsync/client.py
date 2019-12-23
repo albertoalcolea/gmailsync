@@ -96,7 +96,7 @@ class Client:
     def get(self, message_id):
         response = self.service.users().messages().get(userId='me', id=message_id,
             format='raw').execute()
-        return response.get('raw')
+        return response
 
     def fetch(self, msg_ids):
         fetcher = MessageFetcher()

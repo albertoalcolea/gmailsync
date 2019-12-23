@@ -58,7 +58,7 @@ def color_text(text, color=None, bold=False):
     if bold:
         colored.append(BOLD)
 
-    colored.append(text)
+    colored.append(str(text))
 
     if color is not None or bold:
         colored.append(RESET)

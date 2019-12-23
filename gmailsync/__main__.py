@@ -3,11 +3,11 @@ import argparse
 import traceback
 import logging
 
-from .config import ConfigReader, set_up_logger
+from .config import load_config, set_up_logger
 from .client import Client
 from .sync import Synchronizer
 from .channel import channel_factory
-from .cli import cprint
+from .cli import Status, cprint
 
 
 log = logging.getLogger('gmailsync')
@@ -18,7 +18,7 @@ def load_args():
     parser.add_argument('-c', '--conf', help='Configuration file', metavar='file', default='~/.gmailsync.conf')
     parser.add_argument('-l', '--labels', help='List the available labels', action='store_true')
     parser.add_argument('-v', '--verbose', help='Show debug log messages in the log', action='store_true')
-    parser.add_argument('channels', help='Channel name or group name to synchronize. If none defined it will synchronize all of them', nargs='*')
+    parser.add_argument('channels', help='List of channel names or group names to synchronize. If none defined it will synchronize all channels', nargs='*')
     return parser.parse_args()
 
 
@@ -33,8 +33,8 @@ def list_labels(client):
         print('  ', label)
 
 
-def sync_mailboxes(client, channels_to_sync):
-    channels = channel_factory(channels_to_sync)
+def sync_mailboxes(config, client, channels_to_sync):
+    channels = channel_factory(config, channels_to_sync)
     synchronizer = Synchronizer(client, channels)
     synchronizer.sync()
 
@@ -43,8 +43,7 @@ def main():
     args = load_args()
 
     try:
-        config_reader = ConfigReader()
-        config = config_reader.load_config(args.conf)
+        config = load_config(args.conf)
 
         set_up_logger(args.verbose, config.logger_config)
 
@@ -53,8 +52,7 @@ def main():
         if args.labels:
             list_labels(client)
         else:
-            channels_to_sync = config.get_channels(args.channels)
-            sync_mailboxes(client, channels_to_sync)
+            sync_mailboxes(config, client, args.channels)
 
     except (KeyboardInterrupt, SystemExit):
         # Do nothing
@@ -64,10 +62,9 @@ def main():
         if log.handlers:
             # If logger is already configured
             log.error('Something went wrong', exc_info=True)
-
-        cprint(e, status='error', file=sys.stderr)
-        if args.verbose:
+        elif args.verbose:
             traceback.print_exc(file=sys.stderr)
+        cprint(e, status=Status.ERROR, file=sys.stderr)
 
         sys.exit(1)
 
