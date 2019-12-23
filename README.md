@@ -44,7 +44,7 @@ Gmailsync uses the Google API to retrieve messages from Gmail.
 
 As it is a limited service unless your pay, gmailsync does not provide a common project, but you must create your own.
 
-The free layer is far enough for some personal or professional accounts. Gmailsync tries to limit the requests according to Google recommendations to no reach the quota.
+The free tier is far enough for a personal or professional account. Gmailsync tries to limit the requests according to Google recommendations to no reach the quota.
 
 To create a new Google Cloud Platform project go to this link and create a new project:
 [https://console.cloud.google.com/](https://console.cloud.google.com/)
