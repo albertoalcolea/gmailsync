@@ -52,14 +52,14 @@ The free tier is far enough for a personal or professional account. Gmailsync tr
 To create a new Google Cloud Platform project go to this link and create a new project:
 [https://console.cloud.google.com/](https://console.cloud.google.com/)
 
-Then you need to create a new OAuth 2.0 and download it. By default gmailsync takes this file from `~/.gmailsync-credentials.json`. You can customize this path in the configuration file.
+Then you need to create a new OAuth 2.0 and download it. By default gmailsync takes this file from `~/.gmailsync/credentials.json`. You can customize this path in the configuration file.
 
 This file will be the credentials file of the application in the context of gmailsync.
 
 
 ## Configuration
 
-By default gmailsync uses this configuration file: `~/.gmailsync.conf`.
+By default gmailsync uses this configuration file: `~/.gmailsync/config`.
 
 To specify a different path, you can use the `-c` option:
 
@@ -98,7 +98,7 @@ Configuration options are grouped in sections: general, channels, groups and log
 
 ### General
 
-General options of the application. 
+General options of the application.
 
 The section name in the configuration file is `general`.
 
@@ -106,8 +106,8 @@ Options:
 
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
-| `credentials`  | Path to the credentials file of your Google Cloud Platform project.  | No | `~/.gmailsync-credentials.json` |
-| `token` | Path where the token file will be stored. This file contains the token for your associated Gmail account. | No | `~/.gmailsync-token.pickle` |
+| `credentials`  | Path to the credentials file of your Google Cloud Platform project.  | No | `~/.gmailsync/credentials.json` |
+| `token` | Path where the token file will be stored. This file contains the token for your associated Gmail account. | No | `~/.gmailsync/token.pickle` |
 | `box_type` | Default box type for all channels. | No | `mailbox` |
 
 Gmailsync supports the following mailbox types:

@@ -3,11 +3,12 @@ import logging.handlers
 
 from .parser import EnhancedConfigParser
 from .loader import ConfigLoader
+from .models import DEFAULT_HOME_PATH, DEFAULT_CONF_PATH
 from .validator import ConfigValidator, ConfigurationError
 
 
 __all__ = [
-    'load_config', 'set_up_logger', 'ConfigurationError'
+    'load_config', 'set_up_logger', 'ConfigurationError', 'DEFAULT_HOME_PATH', 'DEFAULT_CONF_PATH'
 ]
 
 

@@ -1,11 +1,16 @@
 """
 Models to represent the configuration and its subconfigurations.
 """
+import os
+
 from ..utils import expand_path
 
 
-DEFAULT_CRED_PATH = '~/.gmailsync-credentials.json'
-DEFAULT_TOKEN_PATH = '~/.gmailsync-token.pickle'
+DEFAULT_HOME_PATH = '~/.gmailsync'
+DEFAULT_CONF_PATH = os.path.join(DEFAULT_HOME_PATH, 'config')
+DEFAULT_CRED_PATH = os.path.join(DEFAULT_HOME_PATH, 'credentials.json')
+DEFAULT_TOKEN_PATH = os.path.join(DEFAULT_HOME_PATH, 'token.pickle')
+
 DEFAULT_BOX_TYPE = 'maildir'
 
 DEFAULT_LOG_MAX_BYTES = 104857600 # 100 MB

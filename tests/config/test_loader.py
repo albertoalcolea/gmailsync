@@ -65,8 +65,8 @@ class ConfigLoaderTestCase(unittest.TestCase):
         parser = FakeParser(dict())
         loader = ConfigLoader(parser)
         config = loader.load()
-        self.assertEqual(config.credentials, '~/.gmailsync-credentials.json')
-        self.assertEqual(config.token, '~/.gmailsync-token.pickle')
+        self.assertEqual(config.credentials, '~/.gmailsync/credentials.json')
+        self.assertEqual(config.token, '~/.gmailsync/token.pickle')
         self.assertEqual(config.box_type, 'maildir')
 
     def test_load_channels_config(self):

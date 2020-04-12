@@ -3,7 +3,7 @@ import argparse
 import traceback
 import logging
 
-from .config import load_config, set_up_logger
+from .config import load_config, set_up_logger, DEFAULT_CONF_PATH
 from .client import Client
 from .sync import Synchronizer
 from .channel import channel_factory
@@ -15,7 +15,7 @@ log = logging.getLogger('gmailsync')
 
 def load_args():
     parser = argparse.ArgumentParser(description='gmailsync. Synchronize and save a backup of your gmail messages')
-    parser.add_argument('-c', '--conf', help='Configuration file', metavar='file', default='~/.gmailsync.conf')
+    parser.add_argument('-c', '--conf', help='Configuration file', metavar='file', default=DEFAULT_CONF_PATH)
     parser.add_argument('-l', '--labels', help='List the available labels', action='store_true')
     parser.add_argument('-v', '--verbose', help='Show debug log messages in the log', action='store_true')
     parser.add_argument('channels', help='List of channel names or group names to synchronize. If none defined it will synchronize all channels', nargs='*')
