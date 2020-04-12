@@ -52,7 +52,7 @@ The free tier is far enough for a personal or professional account. Gmailsync tr
 To create a new Google Cloud Platform project go to this link and create a new project:
 [https://console.cloud.google.com/](https://console.cloud.google.com/)
 
-Then you need to create a new OAuth 2.0 and download it. By default gmailsync takes this file from `~/.gmailsync/credentials.json`. You can customize this path in the configuration file.
+Then you need to enable Gmail API for that project and generate a new OAuth 2.0 key and download it. By default gmailsync takes this file from `~/.gmailsync/credentials.json`. You can customize this path in the configuration file.
 
 This file will be the credentials file of the application in the context of gmailsync.
 
