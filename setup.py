@@ -1,5 +1,13 @@
+import os
+import re
 from setuptools import setup, find_packages
-from gmailsync import __version__
+
+
+with open('gmailsync/__init__.py', 'r') as f:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        f.read(), re.MULTILINE).group(1)
+if not version:
+    raise RuntimeError('Cannot find version information')
 
 
 with open('README.md', 'r') as f:
@@ -12,7 +20,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='gmailsync',
-    version=__version__,
+    version=version,
     description='Synchronize and save a backup of your Gmail messages.',
     long_description=readme,
     long_description_content_type='text/markdown',
