@@ -1,14 +1,5 @@
-import os
-import re
-from setuptools import setup
-
-
-with open('gmailsync/__init__.py', 'r') as f:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        f.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError('Cannot find version information')
+from setuptools import setup, find_packages
+from gmailsync import __version__
 
 
 with open('README.md', 'r') as f:
@@ -21,18 +12,15 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='gmailsync',
-    version=version,
+    version=__version__,
     description='Synchronize and save a backup of your Gmail messages.',
     long_description=readme,
+    long_description_content_type='text/markdown',
     author='Alberto Alcolea',
     author_email='albertoalcolea@gmail.com',
     url='http://albertoalcolea.com',
     license='Apache 2.0',
-    packages=['gmailsync'],
-    package_dir={'gmailsync': 'gmailsync'},
-    package_data={
-        'gmailsync': ['README.md', 'LICENSE']
-    },
+    packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     zip_safe=False,
     install_requires=requires,
@@ -42,11 +30,14 @@ setup(
         ]
     },
     classifiers=(
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
+        'Topic :: Communications :: Email',
+        'Topic :: Communications :: Email :: Email Clients (MUA)',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
