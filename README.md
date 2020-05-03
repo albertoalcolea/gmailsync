@@ -1,6 +1,8 @@
 # gmailsync
 
 [![Build Status](https://travis-ci.org/albertoalcolea/gmailsync.svg?branch=master)](https://travis-ci.org/albertoalcolea/gmailsync)
+[![Latest PyPI Version](https://img.shields.io/pypi/v/gmailsync.svg)](https://pypi.python.org/pypi/gmailsync)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/gmailsync.svg)](https://pypi.python.org/pypi/gmailsync)
 
 Synchronize and save a backup of your Gmail messages
 
