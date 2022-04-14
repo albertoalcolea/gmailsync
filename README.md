@@ -54,14 +54,24 @@ The free tier is far enough for a personal or professional account. Gmailsync tr
 To create a new Google Cloud Platform project go to this link and create a new project:
 [https://console.cloud.google.com/](https://console.cloud.google.com/)
 
-Then you need to enable Gmail API for that project and generate a new OAuth 2.0 key and download it. By default gmailsync takes this file from `~/.gmailsync/credentials.json`. You can customize this path in the configuration file.
+Then you need to enable Gmail API for that project and generate a new OAuth 2.0 key and download it. This file will be the credentials file of the application in the context of gmailsync.
 
-This file will be the credentials file of the application in the context of gmailsync.
+By default gmailsync reads the credentials from a file placed in the default gmailsync configuration directory, but you can customize this path in the configuration file.
 
+## XDG User Directory support
+
+Gmailsync supports XDG User Directories. That means you can place the global configuration files in `$XDG_CONFIG_HOME/gmailsync/` without the need to create any particular environment variable for this application or anything else.
+
+If `$XDG_CONFIG_HOME` is not set, gmailsync automatically tries to use `~/.config/gmailsync`. If that directory does not exist, it tries to use `~/.gmailsync `.
 
 ## Configuration
 
-By default gmailsync uses this configuration file: `~/.gmailsync/config`.
+Configuration options for gmailsync.
+
+By default gmailsync uses the configuration file located in any of these paths (in this particular order):
+ - `$XDG_CONFIG_HOME/gmailsync/config`
+ - `~/.config/gmailsync/config`
+ - `~/.gmailsync/config`
 
 To specify a different path, you can use the `-c` option:
 
@@ -108,8 +118,8 @@ Options:
 
 | Option | Description | Mandatory | Default |
 | --- | --- | --- | --- |
-| `credentials`  | Path to the credentials file of your Google Cloud Platform project.  | No | `~/.gmailsync/credentials.json` |
-| `token` | Path where the token file will be stored. This file contains the token for your associated Gmail account. | No | `~/.gmailsync/token.pickle` |
+| `credentials`  | Path to the credentials file of your Google Cloud Platform project.  | No | `$XDG_CONFIG_HOME/gmailsync/credentials.json` or `~/.config/gmailsync/credentials.json` or `~/.gmailsync/credentials.json` |
+| `token` | Path where the token file will be stored. This file contains the token for your associated Gmail account. | No | `$XDG_CONFIG_HOME/gmailsync/token.pickle` or `~/.config/gmailsync/token.pickle` or `~/.gmailsync/token.pickle` |
 | `box_type` | Default box type for all channels. | No | `mailbox` |
 
 Gmailsync supports the following mailbox types:
