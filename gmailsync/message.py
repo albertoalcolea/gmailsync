@@ -90,7 +90,7 @@ class MessageFormatter:
         return base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
 
     def _get_timestamp(self, message):
-        return int(message['internalDate']) // 1000 # seconds since epoch, discarding millis
+        return int(message['internalDate']) // 1000  # seconds since epoch, discarding millis
 
     def _fix_message(self, malformed_message, timestamp):
         message = self.parser.parsestr(malformed_message.decode('UTF-8'))

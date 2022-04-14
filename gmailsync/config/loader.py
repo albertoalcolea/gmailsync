@@ -6,7 +6,6 @@ from .validator import ConfigurationError
 VALID_SECTIONS = ('general', 'log')  # And channel-* and group-*
 
 
-
 class ConfigLoader:
 
     def __init__(self, parser, default_config_dir):

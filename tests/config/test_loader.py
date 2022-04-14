@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from gmailsync.config.parser import EnhancedConfigParser, NoSectionError, NoOptionError, _UNSET
+from gmailsync.config.parser import NoSectionError, NoOptionError, _UNSET
 from gmailsync.config.loader import ConfigLoader
 from gmailsync.config.validator import ConfigurationError
 
@@ -42,7 +42,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
     def setUp(self):
         self.expand_path_patcher = patch('gmailsync.config.models.expand_path')
         self.mock_expand_path = self.expand_path_patcher.start()
-        self.mock_expand_path.side_effect = lambda path : path
+        self.mock_expand_path.side_effect = lambda path: path
 
     def tearDown(self):
         self.expand_path_patcher.stop()
@@ -133,13 +133,13 @@ class ConfigLoaderTestCase(unittest.TestCase):
 
     def test_no_option(self):
         parser = FakeParser({
-             'channel-ch1': {
+            'channel-ch1': {
                 'box_type': 'mbox'
             }
         })
         loader = ConfigLoader(parser)
         with self.assertRaisesRegex(ConfigurationError, "No option 'mailbox' in section: 'channel-ch1'"):
-            config = loader.load()
+            loader.load()
 
     def test_invalid_section(self):
         parser = FakeParser({
@@ -149,7 +149,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
         })
         loader = ConfigLoader(parser)
         with self.assertRaisesRegex(ConfigurationError, "Invalid section name: 'this-is-not-valid'"):
-            config = loader.load()
+            loader.load()
 
     def _verify_channel(self, channel, name, mailbox, query, box_type):
         self.assertEqual(channel.name, name)

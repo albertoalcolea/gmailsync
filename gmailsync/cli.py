@@ -24,7 +24,6 @@ class Color(Enum):
     BRIGHT_WHITE = '\033[97m'
 
 
-
 class Status(Enum):
     SUCCESS = Color.GREEN
     WARNING = Color.YELLOW

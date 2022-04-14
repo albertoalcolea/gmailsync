@@ -56,7 +56,8 @@ def set_up_logger(verbose, config=None):
 
     if config.file is not None:
         file_handler = logging.handlers.RotatingFileHandler(config.file,
-            maxBytes=config.max_bytes, backupCount=config.backup_count)
+                                                            maxBytes=config.max_bytes,
+                                                            backupCount=config.backup_count)
         handlers.append(file_handler)
 
     for handler in handlers:

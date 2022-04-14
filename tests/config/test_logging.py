@@ -53,8 +53,8 @@ class ConfigSetUpLoggerTestCase(unittest.TestCase):
         self.assertEqual(logger.level, logging.DEBUG)
         self.assertEqual(len(logger.handlers), 2)
         self._verify_console_handler(logger.handlers[0], DEFAULT_LOG_FORMAT)
-        self._verify_file_handler(logger.handlers[1], '/gmailsync.log',
-            DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, DEFAULT_LOG_FORMAT)
+        self._verify_file_handler(logger.handlers[1], '/gmailsync.log', DEFAULT_LOG_MAX_BYTES,
+                                  DEFAULT_LOG_BACKUP_COUNT, DEFAULT_LOG_FORMAT)
 
     @patch('builtins.open')
     def test_file_with_customn_config(self, mock_open):
@@ -66,8 +66,7 @@ class ConfigSetUpLoggerTestCase(unittest.TestCase):
         self.assertEqual(logger.level, logging.DEBUG)
         self.assertEqual(len(logger.handlers), 2)
         self._verify_console_handler(logger.handlers[0], DEFAULT_LOG_FORMAT)
-        self._verify_file_handler(logger.handlers[1], '/gmailsync.log', 50, 3,
-            DEFAULT_LOG_FORMAT)
+        self._verify_file_handler(logger.handlers[1], '/gmailsync.log', 50, 3, DEFAULT_LOG_FORMAT)
 
     @patch('builtins.open')
     def test_custom_format(self, mock_open):
@@ -79,8 +78,8 @@ class ConfigSetUpLoggerTestCase(unittest.TestCase):
         self.assertEqual(logger.level, logging.INFO)
         self.assertEqual(len(logger.handlers), 2)
         self._verify_console_handler(logger.handlers[0], '%(message)s')
-        self._verify_file_handler(logger.handlers[1], '/gmailsync.log',
-            DEFAULT_LOG_MAX_BYTES, DEFAULT_LOG_BACKUP_COUNT, '%(message)s')
+        self._verify_file_handler(logger.handlers[1], '/gmailsync.log', DEFAULT_LOG_MAX_BYTES,
+                                  DEFAULT_LOG_BACKUP_COUNT, '%(message)s')
 
     def _verify_console_handler(self, handler, log_format):
         self.assertTrue(isinstance(handler, logging.StreamHandler))

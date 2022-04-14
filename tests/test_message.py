@@ -37,7 +37,7 @@ class MessageFormatterTestCase(unittest.TestCase):
 
     def setUp(self):
         self.formatter = MessageFormatter()
-        self.maxDiff = None # To see full diff in case of error
+        self.maxDiff = None  # To see full diff in case of error
 
     def test_format_actual_mail_message(self):
         message = self._create_message(MAIL_MESSAGE, DATE)

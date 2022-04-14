@@ -18,7 +18,8 @@ def load_args():
     parser.add_argument('-c', '--conf', help='Configuration file', metavar='file', default=get_default_config_file())
     parser.add_argument('-l', '--labels', help='List the available labels', action='store_true')
     parser.add_argument('-v', '--verbose', help='Show debug log messages in the log', action='store_true')
-    parser.add_argument('channels', help='List of channel names or group names to synchronize. If none defined it will synchronize all channels', nargs='*')
+    parser.add_argument('channels', help='List of channel names or group names to synchronize.'
+                        'If none defined it will synchronize all channels', nargs='*')
     return parser.parse_args()
 
 

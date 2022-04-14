@@ -1,13 +1,12 @@
 import pickle
 import os.path
-import time
 import logging
 
 from googleapiclient.discovery import build
 from googleapiclient.http import BatchHttpRequest
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from apiclient import errors  # TODO
+# from apiclient import errors  # TODO
 
 
 log = logging.getLogger('gmailsync')
@@ -25,12 +24,12 @@ class MessageFetcher:
     def fetch_message(self, request_id, response, exception):
         if exception is not None:
             log.error('Error fetching a message: server exception. request_id: %s, response: %s, exception: %s',
-                request_id, response, exception)
+                      request_id, response, exception)
             return
 
         if 'raw' not in response:
             log.error('Error fetching a message: malformed response. request_id: %s, response: %s',
-                request_id, response)
+                      request_id, response)
             return
 
         self.messages.append(response)
@@ -79,23 +78,21 @@ class Client:
             messages.extend(response['messages'])
         else:
             log.error('Error fetching listing messages: malformed response. response: %s, page_token: %s',
-                response, None)
+                      response, None)
 
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
-            response = self.service.users().messages().list(userId='me', q=query,
-                pageToken=page_token).execute()
+            response = self.service.users().messages().list(userId='me', q=query, pageToken=page_token).execute()
             if 'messages' in response:
                 messages.extend(response['messages'])
             else:
                 log.error('Error fetching listing messages: malformed response. response: %s, page_token: %s',
-                response, page_token)
+                          response, page_token)
 
         return messages
 
     def get(self, message_id):
-        response = self.service.users().messages().get(userId='me', id=message_id,
-            format='raw').execute()
+        response = self.service.users().messages().get(userId='me', id=message_id, format='raw').execute()
         return response
 
     def fetch(self, msg_ids):
@@ -103,8 +100,8 @@ class Client:
 
         batch = BatchHttpRequest()
         for msg_desc in msg_ids:
-            batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'],
-                format='raw'), callback=fetcher.fetch_message)
+            batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'], format='raw'),
+                      callback=fetcher.fetch_message)
         batch.execute()
 
         return fetcher.messages

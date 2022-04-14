@@ -26,7 +26,7 @@ class ConfigConstructorConversionsTestCase(unittest.TestCase):
 
     def test_invalid_channels(self):
         with self.assertRaises(ValueError):
-            config = Config(channels='invalid')
+            Config(channels='invalid')
 
     def test_groups_from_dict(self):
         config = Config(groups={'gr1': GR1, 'gr2': GR2})
@@ -42,7 +42,7 @@ class ConfigConstructorConversionsTestCase(unittest.TestCase):
 
     def test_invalid_groups(self):
         with self.assertRaises(ValueError):
-            config = Config(groups='invalid')
+            Config(groups='invalid')
 
 
 class ConfigFilterTestCase(unittest.TestCase):

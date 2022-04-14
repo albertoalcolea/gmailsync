@@ -1,4 +1,4 @@
-from configparser import RawConfigParser, NoSectionError, NoOptionError, _UNSET
+from configparser import RawConfigParser, _UNSET
 import os
 
 from ..utils import expand_path
@@ -29,7 +29,6 @@ class EnhancedConfigParser(RawConfigParser):
         for filename in filenames:
             expanded.append(expand_path(filename))
         return super().read(expanded, encoding)
-
 
     def getpath(self, section, option, *, is_file=False, is_dir=False, readable=False,
                 writable=False, raw=False, vars=None, fallback=_UNSET, **kwargs):

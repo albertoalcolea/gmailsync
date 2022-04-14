@@ -13,7 +13,7 @@ class EnhancedConfigParserReadTestCase(unittest.TestCase):
     @patch('gmailsync.config.parser.RawConfigParser.read')
     @patch('gmailsync.config.parser.expand_path')
     def test_expand_single_filename_in_read(self, mock_expand_path, mock_super_read):
-        mock_expand_path.side_effect = lambda path : path
+        mock_expand_path.side_effect = lambda path: path
         parser = EnhancedConfigParser()
         parser.read('~/.config/.gmailsync.conf', encoding='utf-8')
         mock_expand_path.assert_called_once_with('~/.config/.gmailsync.conf')
@@ -22,7 +22,7 @@ class EnhancedConfigParserReadTestCase(unittest.TestCase):
     @patch('gmailsync.config.parser.RawConfigParser.read')
     @patch('gmailsync.config.parser.expand_path')
     def test_expand_multiple_filenames_in_read(self, mock_expand_path, mock_super_read):
-        mock_expand_path.side_effect = lambda path : path
+        mock_expand_path.side_effect = lambda path: path
         parser = EnhancedConfigParser()
         parser.read(['/a.conf', '/b.conf'])
         mock_expand_path.assert_has_calls([call('/a.conf'), call('/b.conf')])
@@ -55,7 +55,7 @@ class EnhancedConfigParserPathTestCase(unittest.TestCase):
 
     @patch('gmailsync.config.parser.expand_path')
     def test_expand_path(self, mock_expand_path):
-        mock_expand_path.side_effect = lambda path : path
+        mock_expand_path.side_effect = lambda path: path
         path = self.parser.getpath('section1', 'path')
         self.assertEqual(path, '/foo')
         mock_expand_path.assert_called_once_with('/foo')
@@ -101,7 +101,7 @@ class EnhancedConfigParserPathTestCase(unittest.TestCase):
         self.mock_isfile.return_value = True
         self.mock_access.return_value = False
         with self.assertRaisesRegex(ValueError, "Path must be readable. Check permissions: '/foo'"):
-             path = self.parser.getpath('section1', 'path', is_file=True, readable=True)
+            self.parser.getpath('section1', 'path', is_file=True, readable=True)
         self.mock_access.assert_called_once_with('/foo', os.F_OK | os.R_OK)
 
     def test_as_writable_file(self):
@@ -115,7 +115,7 @@ class EnhancedConfigParserPathTestCase(unittest.TestCase):
         self.mock_isfile.return_value = True
         self.mock_access.return_value = False
         with self.assertRaisesRegex(ValueError, "Path must be writable. Check permissions: '/foo'"):
-             path = self.parser.getpath('section1', 'path', is_file=True, writable=True)
+            self.parser.getpath('section1', 'path', is_file=True, writable=True)
         self.mock_access.assert_called_once_with('/foo', os.F_OK | os.W_OK)
 
     def test_as_readable_dir(self):
@@ -129,7 +129,7 @@ class EnhancedConfigParserPathTestCase(unittest.TestCase):
         self.mock_isdir.return_value = True
         self.mock_access.return_value = False
         with self.assertRaisesRegex(ValueError, "Path must be readable. Check permissions: '/foo'"):
-             path = self.parser.getpath('section1', 'path', is_dir=True, readable=True)
+            self.parser.getpath('section1', 'path', is_dir=True, readable=True)
         self.mock_access.assert_called_once_with('/foo', os.F_OK | os.X_OK | os.R_OK)
 
     def test_as_writable_dir(self):
@@ -143,7 +143,7 @@ class EnhancedConfigParserPathTestCase(unittest.TestCase):
         self.mock_isdir.return_value = True
         self.mock_access.return_value = False
         with self.assertRaisesRegex(ValueError, "Path must be writable. Check permissions: '/foo'"):
-             path = self.parser.getpath('section1', 'path', is_dir=True, writable=True)
+            self.parser.getpath('section1', 'path', is_dir=True, writable=True)
         self.mock_access.assert_called_once_with('/foo', os.F_OK | os.X_OK | os.W_OK)
 
     @patch('gmailsync.config.parser.expand_path')

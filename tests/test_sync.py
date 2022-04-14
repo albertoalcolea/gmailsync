@@ -61,4 +61,3 @@ class SynchronizerTestCase(unittest.TestCase):
         self.client.list.assert_called_with(query=QUERY1, since=TIMESTAMP1)
         self.client.fetch.assert_has_calls([call(('msg_id3', 'msg_id2')), call(('msg_id1',))])
         self.mailbox1.add.assert_has_calls([call('msg3'), call('msg2'), call('msg1')])
-

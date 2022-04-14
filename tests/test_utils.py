@@ -8,10 +8,10 @@ from gmailsync.utils import chunked, expand_path
 class ChunkedTestCase(unittest.TestCase):
 
     def test_chunked(self):
-        iterable = [1,2,3,4,5,6,7]
+        iterable = [1, 2, 3, 4, 5, 6, 7]
         generator = chunked(iterable, 3)
-        self.assertEqual(next(generator), (1,2,3))
-        self.assertEqual(next(generator), (4,5,6))
+        self.assertEqual(next(generator), (1, 2, 3))
+        self.assertEqual(next(generator), (4, 5, 6))
         self.assertEqual(next(generator), (7,))
         with self.assertRaises(StopIteration):
             next(generator)

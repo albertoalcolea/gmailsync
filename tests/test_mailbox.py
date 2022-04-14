@@ -1,7 +1,5 @@
 import unittest
-from unittest.mock import Mock, MagicMock, patch, call
-import base64
-import datetime
+from unittest.mock import Mock, MagicMock, patch
 import contextlib
 import os
 
@@ -22,27 +20,27 @@ class MailBoxFactoryTestCase(unittest.TestCase):
 
     @patch('gmailsync.mailbox.Maildir')
     def test_create_maildir_mailbox(self, mock_maildir):
-        mailbox = Mailbox('maildir', '/mail/box')
+        Mailbox('maildir', '/mail/box')
         mock_maildir.assert_called_with('/mail/box')
 
     @patch('gmailsync.mailbox.mbox')
     def test_create_mbox_mailbox(self, mock_mbox):
-        mailbox = Mailbox('mbox', '/mail/box')
+        Mailbox('mbox', '/mail/box')
         mock_mbox.assert_called_with('/mail/box')
 
     @patch('gmailsync.mailbox.MH')
     def test_create_mh_mailbox(self, mock_mh):
-        mailbox = Mailbox('mh', '/mail/box')
+        Mailbox('mh', '/mail/box')
         mock_mh.assert_called_with('/mail/box')
 
     @patch('gmailsync.mailbox.Babyl')
     def test_create_babyl_mailbox(self, mock_babyl):
-        mailbox = Mailbox('babyl', '/mail/box')
+        Mailbox('babyl', '/mail/box')
         mock_babyl.assert_called_with('/mail/box')
 
     @patch('gmailsync.mailbox.MMDF')
     def test_create_mmdf_mailbox(self, mock_mmdf):
-        mailbox = Mailbox('mmdf', '/mail/box')
+        Mailbox('mmdf', '/mail/box')
         mock_mmdf.assert_called_with('/mail/box')
 
     def test_invalid_box_type(self):

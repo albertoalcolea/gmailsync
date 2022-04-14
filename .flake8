@@ -1,0 +1,10 @@
+[flake8]
+max-line-length = 120
+
+# Ignore these errors
+# W191: identation contains tabs
+ignore = W191
+
+exclude =
+    .git
+    venv

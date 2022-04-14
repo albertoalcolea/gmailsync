@@ -27,7 +27,7 @@ class Synchronizer:
 
         log.debug('Channel [%s] - Getting new messages', channel.name)
         msg_descs = self.client.list(query=channel.query, since=last_timestamp)
-        msg_descs.reverse() # ASC order, oldest first
+        msg_descs.reverse()  # ASC order, oldest first
 
         log.debug('Channel [%s] - Fetching %s new messages', channel.name, len(msg_descs))
 

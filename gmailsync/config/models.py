@@ -12,8 +12,8 @@ TOKEN_FILENAME = 'token.pickle'
 
 DEFAULT_BOX_TYPE = 'maildir'
 
-DEFAULT_LOG_MAX_BYTES = 104857600 # 100 MB
-DEFAULT_LOG_BACKUP_COUNT = 50 # 50 files
+DEFAULT_LOG_MAX_BYTES = 104857600  # 100 MB
+DEFAULT_LOG_BACKUP_COUNT = 50  # 50 files
 DEFAULT_LOG_FORMAT = '%(asctime)s %(levelname)s [%(name)s] %(message)s'
 
 
@@ -118,8 +118,11 @@ class Config(BaseConfig):
 
     def __init__(self, default_config_dir, credentials=None, token=None, box_type=None, channels=None, groups=None,
                  logger_config=None):
-        self.credentials = expand_path(self._get(credentials, default=os.path.join(default_config_dir, CREDENTIALS_FILENAME)))
-        self.token = expand_path(self._get(token, default=os.path.join(default_config_dir, TOKEN_FILENAME)))
+        default_credentials_file = os.path.join(default_config_dir, CREDENTIALS_FILENAME)
+        default_token_file = os.path.join(default_config_dir, TOKEN_FILENAME)
+
+        self.credentials = expand_path(self._get(credentials, default=default_credentials_file))
+        self.token = expand_path(self._get(token, default=default_token_file))
         self.box_type = self._get(box_type, default=DEFAULT_BOX_TYPE)
 
         self.logger_config = self._get(logger_config, default=LoggerConfig())
@@ -144,8 +147,8 @@ class Config(BaseConfig):
         elif isinstance(resolved, (list, tuple)):
             return {e.name: e for e in resolved}
         else:
-            raise ValueError('{!r} must be a dict (name: config object) or an iterable of ' \
-                'config objects'.format(value))
+            raise ValueError('{!r} must be a dict (name: config object) or an iterable of '
+                             'config objects'.format(value))
 
     def add_channel(self, channel):
         self.channels[channel.name] = channel

@@ -3,7 +3,6 @@ from unittest.mock import patch, call
 
 from gmailsync.config.models import Config, ChannelConfig
 from gmailsync.channel import Channel, channel_factory
-from gmailsync.mailbox import Mailbox
 
 
 class ChannelTestCase(unittest.TestCase):
@@ -32,7 +31,8 @@ class ChannelTestCase(unittest.TestCase):
     def test_create_channel_with_query_with_after(self, mock_log):
         channel = Channel('ch1', 'fake_mailbox', 'label:INBOX after:2018-05-01')
         self._verify_channel(channel, 'ch1', 'label:INBOX after:2018-05-01')
-        mock_log.warn.assert_called_with("'after:' will be overwritten in query to do incremental queries based on the saved state")
+        mock_log.warn.assert_called_with("'after:' will be overwritten in query to do incremental queries based on the "
+                                         "saved state")
 
     def _verify_channel(self, channel, name, query):
         self.assertTrue(isinstance(channel, Channel))
