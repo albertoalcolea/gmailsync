@@ -3,7 +3,6 @@ import os.path
 import logging
 
 from googleapiclient.discovery import build
-from googleapiclient.http import BatchHttpRequest
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 # from apiclient import errors  # TODO
@@ -98,10 +97,9 @@ class Client:
     def fetch(self, msg_ids):
         fetcher = MessageFetcher()
 
-        batch = BatchHttpRequest()
+        batch = self.service.new_batch_http_request(callback=fetcher.fetch_message)
         for msg_desc in msg_ids:
-            batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'], format='raw'),
-                      callback=fetcher.fetch_message)
+            batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'], format='raw'))
         batch.execute()
 
         return fetcher.messages
