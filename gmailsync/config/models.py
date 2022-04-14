@@ -6,10 +6,9 @@ import os
 from ..utils import expand_path
 
 
-DEFAULT_HOME_PATH = '~/.gmailsync'
-DEFAULT_CONF_PATH = os.path.join(DEFAULT_HOME_PATH, 'config')
-DEFAULT_CRED_PATH = os.path.join(DEFAULT_HOME_PATH, 'credentials.json')
-DEFAULT_TOKEN_PATH = os.path.join(DEFAULT_HOME_PATH, 'token.pickle')
+CONFIG_FILENAME = 'config'
+CREDENTIALS_FILENAME = 'credentials.json'
+TOKEN_FILENAME = 'token.pickle'
 
 DEFAULT_BOX_TYPE = 'maildir'
 
@@ -117,10 +116,10 @@ class Config(BaseConfig):
 
     """
 
-    def __init__(self, credentials=None, token=None, box_type=None, channels=None, groups=None,
+    def __init__(self, default_config_dir, credentials=None, token=None, box_type=None, channels=None, groups=None,
                  logger_config=None):
-        self.credentials = expand_path(self._get(credentials, default=DEFAULT_CRED_PATH))
-        self.token = expand_path(self._get(token, default=DEFAULT_TOKEN_PATH))
+        self.credentials = expand_path(self._get(credentials, default=os.path.join(default_config_dir, CREDENTIALS_FILENAME)))
+        self.token = expand_path(self._get(token, default=os.path.join(default_config_dir, TOKEN_FILENAME)))
         self.box_type = self._get(box_type, default=DEFAULT_BOX_TYPE)
 
         self.logger_config = self._get(logger_config, default=LoggerConfig())

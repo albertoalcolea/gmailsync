@@ -9,8 +9,9 @@ VALID_SECTIONS = ('general', 'log')  # And channel-* and group-*
 
 class ConfigLoader:
 
-    def __init__(self, parser):
+    def __init__(self, parser, default_config_dir):
         self.parser = parser
+        self.default_config_dir = default_config_dir
 
     def load(self):
         try:
@@ -35,7 +36,8 @@ class ConfigLoader:
 
             logger_config = self._parse_logger_config()
 
-            config = Config(credentials=credentials,
+            config = Config(default_config_dir=self.default_config_dir,
+                            credentials=credentials,
                             token=token,
                             box_type=box_type,
                             channels=channels,

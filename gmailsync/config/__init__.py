@@ -1,28 +1,46 @@
+import os
+from pathlib import Path
 import logging
 import logging.handlers
 
 from .parser import EnhancedConfigParser
 from .loader import ConfigLoader
-from .models import DEFAULT_HOME_PATH, DEFAULT_CONF_PATH
+from .models import CONFIG_FILENAME
 from .validator import ConfigValidator, ConfigurationError
 
 
 __all__ = [
-    'load_config', 'set_up_logger', 'ConfigurationError', 'DEFAULT_HOME_PATH', 'DEFAULT_CONF_PATH'
+    'load_config', 'set_up_logger', 'get_default_config_file', 'ConfigurationError'
 ]
 
 
-def load_config(config_path):
-    parser = EnhancedConfigParser()
-    parser.read(config_path)
+def load_config(config_file):
+    if not os.path.isfile(config_file):
+        raise ConfigurationError('Configuration file does not exist: {}'.format(config_file))
 
-    loader = ConfigLoader(parser)
+    parser = EnhancedConfigParser()
+    parser.read(config_file)
+
+    loader = ConfigLoader(parser, get_config_dir())
     config = loader.load()
 
     validator = ConfigValidator()
     validator.validate(config)
 
     return config
+
+
+def get_config_dir():
+    xdg_config_dir = os.environ.get('XDG_CONFIG_HOME') or os.path.join(Path.home(), '.config')
+    xdg_config_gmailsync = os.path.join(xdg_config_dir, 'gmailsync')
+    if os.path.isdir(xdg_config_gmailsync):
+        return xdg_config_gmailsync
+    else:
+        return os.path.join(Path.home(), '.gmailsync')
+
+
+def get_default_config_file():
+    return os.path.join(get_config_dir(), CONFIG_FILENAME)
 
 
 def set_up_logger(verbose, config=None):
