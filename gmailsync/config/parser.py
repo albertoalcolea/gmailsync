@@ -1,4 +1,4 @@
-from configparser import RawConfigParser, _UNSET
+from configparser import RawConfigParser, NoSectionError, NoOptionError, _UNSET  # noqa: F401
 import os
 
 from ..utils import expand_path

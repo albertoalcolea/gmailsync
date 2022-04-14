@@ -35,13 +35,13 @@ class ConfigLoader:
 
             logger_config = self._parse_logger_config()
 
-            config = Config(default_config_dir=self.default_config_dir,
-                            credentials=credentials,
+            config = Config(credentials=credentials,
                             token=token,
                             box_type=box_type,
                             channels=channels,
                             groups=groups,
-                            logger_config=logger_config)
+                            logger_config=logger_config,
+                            default_config_dir=self.default_config_dir)
 
             return config
 

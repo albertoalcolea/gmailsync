@@ -55,7 +55,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'box_type': 'mbox'
             }
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
         self.assertEqual(config.credentials, '/etc/gmailsync/credentials.json')
         self.assertEqual(config.token, '/etc/gmailsync/token.pickle')
@@ -63,10 +63,10 @@ class ConfigLoaderTestCase(unittest.TestCase):
 
     def test_load_default_general_config(self):
         parser = FakeParser(dict())
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
-        self.assertEqual(config.credentials, '~/.gmailsync/credentials.json')
-        self.assertEqual(config.token, '~/.gmailsync/token.pickle')
+        self.assertEqual(config.credentials, 'fake_config_dir/credentials.json')
+        self.assertEqual(config.token, 'fake_config_dir/token.pickle')
         self.assertEqual(config.box_type, 'maildir')
 
     def test_load_channels_config(self):
@@ -81,7 +81,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'query': 'label:ch2',
             },
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
         self.assertEqual(len(config.channels), 2)
         self.assertTrue('ch1' in config.channels)
@@ -98,7 +98,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'channels': ['ch3']
             }
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
         self.assertEqual(len(config.groups), 2)
         self.assertTrue('gr1' in config.groups)
@@ -115,7 +115,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'format': '%(message)s'
             }
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
         self.assertEqual(config.logger_config.file, '/var/log/gmailsync.log')
         self.assertEqual(config.logger_config.max_bytes, 100)
@@ -124,7 +124,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
 
     def test_load_default_logger_config(self):
         parser = FakeParser(dict())
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         config = loader.load()
         self.assertEqual(config.logger_config.file, None)
         self.assertEqual(config.logger_config.max_bytes, 104857600)
@@ -137,7 +137,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'box_type': 'mbox'
             }
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         with self.assertRaisesRegex(ConfigurationError, "No option 'mailbox' in section: 'channel-ch1'"):
             loader.load()
 
@@ -147,7 +147,7 @@ class ConfigLoaderTestCase(unittest.TestCase):
                 'foo': 'bar'
             }
         })
-        loader = ConfigLoader(parser)
+        loader = ConfigLoader(parser, 'fake_config_dir')
         with self.assertRaisesRegex(ConfigurationError, "Invalid section name: 'this-is-not-valid'"):
             loader.load()
 

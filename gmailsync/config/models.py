@@ -116,13 +116,20 @@ class Config(BaseConfig):
 
     """
 
-    def __init__(self, default_config_dir, credentials=None, token=None, box_type=None, channels=None, groups=None,
-                 logger_config=None):
-        default_credentials_file = os.path.join(default_config_dir, CREDENTIALS_FILENAME)
-        default_token_file = os.path.join(default_config_dir, TOKEN_FILENAME)
+    def __init__(self, credentials=None, token=None, box_type=None, channels=None, groups=None,
+                 logger_config=None, default_config_dir=None):
+        default_credentials_file = None
+        default_token_file = None
 
-        self.credentials = expand_path(self._get(credentials, default=default_credentials_file))
-        self.token = expand_path(self._get(token, default=default_token_file))
+        if default_config_dir is not None:
+            default_credentials_file = os.path.join(default_config_dir, CREDENTIALS_FILENAME)
+            default_token_file = os.path.join(default_config_dir, TOKEN_FILENAME)
+
+        credentials_file = self._get(credentials, default=default_credentials_file)
+        token_file = self._get(token, default=default_token_file)
+
+        self.credentials = expand_path(credentials_file) if credentials_file is not None else None
+        self.token = expand_path(token_file) if token_file is not None else None
         self.box_type = self._get(box_type, default=DEFAULT_BOX_TYPE)
 
         self.logger_config = self._get(logger_config, default=LoggerConfig())
