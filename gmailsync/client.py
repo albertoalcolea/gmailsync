@@ -6,15 +6,14 @@ import time
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-
 # from apiclient import errors  # TODO
 
 
-log = logging.getLogger("gmailsync")
+log = logging.getLogger('gmailsync')
 
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 
 class MessageFetcher:
@@ -26,27 +25,20 @@ class MessageFetcher:
         if exception is not None:
             if exception.resp.status in [429, 403]:
                 log.error(
-                    "Batch rate limit hit: request_id: %s, response: %s, exception: %s - applying backoff...",
+                    'Batch rate limit hit: request_id: %s, response: %s, exception: %s - applying backoff...',
                     request_id,
                     response,
                     exception,
                 )
                 time.sleep(5)  # Cooldown before returning
             else:
-                log.error(
-                    "Error fetching a message: server exception. request_id: %s, response: %s, exception: %s",
-                    request_id,
-                    response,
-                    exception,
-                )
+                log.error('Error fetching a message: server exception. request_id: %s, response: %s, exception: %s',
+                          request_id, response, exception)
             return
 
-        if "raw" not in response:
-            log.error(
-                "Error fetching a message: malformed response. request_id: %s, response: %s",
-                request_id,
-                response,
-            )
+        if 'raw' not in response:
+            log.error('Error fetching a message: malformed response. request_id: %s, response: %s',
+                      request_id, response)
             return
 
         self.messages.append(response)
@@ -56,7 +48,7 @@ class Client:
 
     def __init__(self, credentials_path, token_path):
         creds = self._authenticate(credentials_path, token_path)
-        self.service = build("gmail", "v1", credentials=creds)
+        self.service = build('gmail', 'v1', credentials=creds)
 
     def _authenticate(self, credentials_path, token_path):
         creds = None
@@ -64,71 +56,53 @@ class Client:
         # created automatically when the authorization flow completes for the first
         # time
         if os.path.exists(token_path):
-            with open(token_path, "rb") as token:
+            with open(token_path, 'rb') as token:
                 creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    credentials_path, SCOPES
-                )
+                flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
-            with open(token_path, "wb") as token:
+            with open(token_path, 'wb') as token:
                 pickle.dump(creds, token)
         return creds
 
     def labels(self):
-        response = self.service.users().labels().list(userId="me").execute()
-        return response.get("labels", [])
+        response = self.service.users().labels().list(userId='me').execute()
+        return response.get('labels', [])
 
     def list(self, query=None, since=None):
         if not query:
             # If not specified explicitly in the query, discard hangout chats
-            query = "!in:chat"
+            query = '!in:chat'
         if since:
-            query += " AND after:{}".format(since)
+            query += ' AND after:{}'.format(since)
 
-        response = self.service.users().messages().list(userId="me", q=query).execute()
+        response = self.service.users().messages().list(userId='me', q=query).execute()
         messages = []
-        if "messages" in response:
-            messages.extend(response["messages"])
+        if 'messages' in response:
+            messages.extend(response['messages'])
         else:
-            log.error(
-                "Error fetching listing messages: malformed response. response: %s, page_token: %s",
-                response,
-                None,
-            )
+            log.error('Error fetching listing messages: malformed response. response: %s, page_token: %s',
+                      response, None)
 
-        while "nextPageToken" in response:
-            page_token = response["nextPageToken"]
-            response = (
-                self.service.users()
-                .messages()
-                .list(userId="me", q=query, pageToken=page_token)
-                .execute()
-            )
-            if "messages" in response:
-                messages.extend(response["messages"])
+        while 'nextPageToken' in response:
+            page_token = response['nextPageToken']
+            response = self.service.users().messages().list(userId='me', q=query, pageToken=page_token).execute()
+            if 'messages' in response:
+                messages.extend(response['messages'])
             else:
-                log.error(
-                    "Error fetching listing messages: malformed response. response: %s, page_token: %s",
-                    response,
-                    page_token,
-                )
+                log.error('Error fetching listing messages: malformed response. response: %s, page_token: %s',
+                          response, page_token)
             time.sleep(1)  # avoid rate limit
 
         return messages
 
     def get(self, message_id):
-        response = (
-            self.service.users()
-            .messages()
-            .get(userId="me", id=message_id, format="raw")
-            .execute()
-        )
+        response = self.service.users().messages().get(userId='me', id=message_id, format='raw').execute()
         return response
 
     def fetch(self, msg_ids):
@@ -136,15 +110,11 @@ class Client:
 
         batch = self.service.new_batch_http_request(callback=fetcher.fetch_message)
         for msg_desc in msg_ids:
-            batch.add(
-                self.service.users()
-                .messages()
-                .get(userId="me", id=msg_desc["id"], format="raw")
-            )
+            batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'], format='raw'))
         batch.execute()
 
         if len(fetcher.messages) < len(msg_ids):
             # likely hit a rate limit. retry later.
-            raise Exception("fewer messages fetched than requested")
+            raise Exception('fewer messages fetched than requested')
 
         return fetcher.messages

@@ -9,19 +9,15 @@ from .loader import ConfigLoader
 from .models import CONFIG_FILENAME
 from .validator import ConfigValidator, ConfigurationError
 
+
 __all__ = [
-    "load_config",
-    "set_up_logger",
-    "get_default_config_file",
-    "ConfigurationError",
+    'load_config', 'set_up_logger', 'get_default_config_file', 'ConfigurationError'
 ]
 
 
 def load_config(config_file):
     if not os.path.isfile(config_file):
-        raise ConfigurationError(
-            "Configuration file does not exist: {}".format(config_file)
-        )
+        raise ConfigurationError('Configuration file does not exist: {}'.format(config_file))
 
     parser = EnhancedConfigParser()
     parser.read(config_file)
@@ -36,14 +32,12 @@ def load_config(config_file):
 
 
 def get_config_dir():
-    xdg_config_dir = os.environ.get("XDG_CONFIG_HOME") or os.path.join(
-        Path.home(), ".config"
-    )
-    xdg_config_gmailsync = os.path.join(xdg_config_dir, "gmailsync")
+    xdg_config_dir = os.environ.get('XDG_CONFIG_HOME') or os.path.join(Path.home(), '.config')
+    xdg_config_gmailsync = os.path.join(xdg_config_dir, 'gmailsync')
     if os.path.isdir(xdg_config_gmailsync):
         return xdg_config_gmailsync
     else:
-        return os.path.join(Path.home(), ".gmailsync")
+        return os.path.join(Path.home(), '.gmailsync')
 
 
 def get_default_config_file():
@@ -51,7 +45,7 @@ def get_default_config_file():
 
 
 def set_up_logger(verbose, config=None):
-    logger = logging.getLogger("gmailsync")
+    logger = logging.getLogger('gmailsync')
     logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
     formatter = logging.Formatter(config.format)
@@ -62,9 +56,9 @@ def set_up_logger(verbose, config=None):
     handlers.append(console_handler)
 
     if config.file is not None:
-        file_handler = logging.handlers.RotatingFileHandler(
-            config.file, maxBytes=config.max_bytes, backupCount=config.backup_count
-        )
+        file_handler = logging.handlers.RotatingFileHandler(config.file,
+                                                            maxBytes=config.max_bytes,
+                                                            backupCount=config.backup_count)
         handlers.append(file_handler)
 
     for handler in handlers:
@@ -72,6 +66,6 @@ def set_up_logger(verbose, config=None):
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-    if os.getenv("GMAILSYNC_DEBUG"):
+    if os.getenv('GMAILSYNC_DEBUG'):
         httplib2.debuglevel = 1
-        logging.getLogger("googleapiclient.discovery").setLevel(logging.DEBUG)
+        logging.getLogger('googleapiclient.discovery').setLevel(logging.DEBUG)
