@@ -1,6 +1,6 @@
 # gmailsync
 
-[![Build Status](https://travis-ci.org/albertoalcolea/gmailsync.svg?branch=master)](https://travis-ci.org/albertoalcolea/gmailsync)
+[![Build Status](https://github.com/albertoalcolea/gmailsync/workflows/Tests/badge.svg)](https://github.com/albertoalcolea/gmailsync/actions?query=workflow%3ATests)
 [![Latest PyPI Version](https://img.shields.io/pypi/v/gmailsync.svg)](https://pypi.python.org/pypi/gmailsync)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/gmailsync.svg)](https://pypi.python.org/pypi/gmailsync)
 
