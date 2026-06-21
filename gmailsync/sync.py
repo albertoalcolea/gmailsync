@@ -52,7 +52,7 @@ class Synchronizer:
                         channel.mailbox.add(message)
                         total += 1
                     break
-                except Exception as _err:
+                except Exception:
                     retries += 1
                     # Exponential Backoff with Jitter
                     delay = (2**retries) + secrets.SystemRandom().uniform(0, 1)

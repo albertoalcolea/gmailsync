@@ -27,6 +27,15 @@ class SynchronizerTestCase(unittest.TestCase):
         self.mailbox2.get_last_timestamp.return_value = TIMESTAMP2
         self.channel2 = Channel(CHANNEL2_NAME, self.mailbox2, QUERY2)
 
+        patcher_sleep = patch('gmailsync.sync.time.sleep', return_value=None)
+        patcher_rand = patch('gmailsync.sync.secrets.SystemRandom', return_value=Mock(uniform=lambda a, b: 0))
+
+        self.addCleanup(patcher_sleep.stop)
+        self.addCleanup(patcher_rand.stop)
+
+        self.mock_sleep = patcher_sleep.start()
+        self.mock_rand = patcher_rand.start()
+
     def test_sync_one_channel(self):
         self.client.list.return_value = ['msg_id1', 'msg_id2', 'msg_id3']
         self.client.fetch.return_value = ['msg3', 'msg2', 'msg1']
