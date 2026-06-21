@@ -1,6 +1,7 @@
 import pickle
 import os.path
 import logging
+import time
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -22,8 +23,17 @@ class MessageFetcher:
 
     def fetch_message(self, request_id, response, exception):
         if exception is not None:
-            log.error('Error fetching a message: server exception. request_id: %s, response: %s, exception: %s',
-                      request_id, response, exception)
+            if exception.resp.status in [429, 403]:
+                log.error(
+                    'Batch rate limit hit: request_id: %s, response: %s, exception: %s - applying backoff...',
+                    request_id,
+                    response,
+                    exception,
+                )
+                time.sleep(5)  # Cooldown before returning
+            else:
+                log.error('Error fetching a message: server exception. request_id: %s, response: %s, exception: %s',
+                          request_id, response, exception)
             return
 
         if 'raw' not in response:
@@ -87,6 +97,7 @@ class Client:
             else:
                 log.error('Error fetching listing messages: malformed response. response: %s, page_token: %s',
                           response, page_token)
+            time.sleep(1)  # avoid rate limit
 
         return messages
 
@@ -101,5 +112,9 @@ class Client:
         for msg_desc in msg_ids:
             batch.add(self.service.users().messages().get(userId='me', id=msg_desc['id'], format='raw'))
         batch.execute()
+
+        if len(fetcher.messages) < len(msg_ids):
+            # likely hit a rate limit. retry later.
+            raise Exception('fewer messages fetched than requested')
 
         return fetcher.messages

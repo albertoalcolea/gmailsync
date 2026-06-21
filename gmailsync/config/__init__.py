@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import logging
 import logging.handlers
+import httplib2
 
 from .parser import EnhancedConfigParser
 from .loader import ConfigLoader
@@ -64,3 +65,7 @@ def set_up_logger(verbose, config=None):
         handler.setLevel(logging.DEBUG)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
+
+    if os.getenv('GMAILSYNC_DEBUG'):
+        httplib2.debuglevel = 1
+        logging.getLogger('googleapiclient.discovery').setLevel(logging.DEBUG)
